@@ -57,7 +57,7 @@ class TenantController extends Controller
         ]);
 
         if ($tenant){
-            $this->storeFirstLedgerEntry($tenant->id);
+
             Alert::success('Success', "Tenant created successfully!");
             return redirect()->route('tenants.index');
         }
@@ -139,9 +139,13 @@ class TenantController extends Controller
         $tenantId = $request->tenantId;
         $tenant = Tenant::with(['user', 'room'])->where('id', $tenantId)->first();
 
-        $tenant->balance = $this->totalBalance($tenantId);
+
+        $monthlyRate = $tenant->room->price;
+        $tenant->monthly_rate = number_format($monthlyRate, 2);
         $tenant->total_paid = number_format($this->totalPaid($tenantId), 2);
         $tenant->payable_month = $this->totalPayableMonth($tenantId);
+        $payable = $tenant->payable_month * $monthlyRate;
+        $tenant->balance = number_format($payable - $this->totalPaid($tenantId), 2);
         return response()->json($tenant);
     }
 
@@ -160,12 +164,10 @@ class TenantController extends Controller
         $tenant = Tenant::find($tenantId);
         $registrationDate = Carbon::parse($tenant->registration_date);
         $now = Carbon::now();
-        $totalMonths = $registrationDate->diffInMonths($now, false);
-        if ($registrationDate->month === $now->month && $registrationDate->year === $now->year) {
-            $totalMonths++; // Add 1 to account for the current month
-        }
-        $totalPaidMonths = $this->totalPaid($tenantId) / $tenant->room->price;
-        return $totalMonths - $totalPaidMonths;
+        return $now->diffInMonths($registrationDate);
+//        if ($registrationDate->month === $now->month && $registrationDate->year === $now->year) {
+//            $totalMonths++; // Add 1 to account for the current month
+//        }
     }
 
     public function totalMonthlyRate($tenantId) : int
@@ -178,30 +180,6 @@ class TenantController extends Controller
             ->sum('monthly_rate');
     }
 
-    public function totalBalance($tenantId) : int
-    {
-        $totalMonthlyRate = $this->totalMonthlyRate($tenantId);
-        $totalPaid = $this->totalPaid($tenantId);
-        return $totalMonthlyRate - $totalPaid;
-    }
 
-    public function storeFirstLedgerEntry($tenantId): void
-    {
-        $tenant = Tenant::find($tenantId);
-        $user = $tenant->user;
-        $room = $tenant->room;
-        $monthlyRate = $room->price;
-        Ledger::create([
-            'user_id' => $user->id,
-            'tenant_id' => $tenant->id,
-            'payment_date' => now()->format('Y-m-d'),
-            'registration_date' => now()->format('Y-m-d'),
-            'tenant' => $user->name,
-            'monthly_rate' => $monthlyRate,
-            'amount' => 0,
-            'balance' => $monthlyRate,
-            'invoice' => 'first entry',
-        ]);
-    }
 
 }

@@ -13,8 +13,8 @@ class LedgerController extends Controller
      */
     public function index()
     {
-        $ledgers = Ledger::latest()->get();
-        dd($ledgers);
+        $ledgers = Ledger::query();
+        $ledgers->orderBy('created_at', 'desc')->get();
         return view('ledger.index', compact('ledgers'));
     }
 
@@ -66,16 +66,6 @@ class LedgerController extends Controller
         //
     }
 
-
-    public function totalPaid($tenantId)
-    {
-        $tenant = Tenant::find($tenantId);
-        $registrationDate = $tenant->registration_date;
-        $currentDate = now()->format('Y-m-d');
-        return Ledger::where('tenant_id', $tenant->id)
-            ->whereBetween('registration_date', [$registrationDate, $currentDate])
-            ->sum('amount');
-    }
 
 
 }

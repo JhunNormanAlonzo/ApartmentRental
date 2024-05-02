@@ -129,7 +129,7 @@
                     success : function (response){
                         // console.log(response);
                         $("#tenant-name").text(response.user.name);
-                        $("#tenant-monthly-rate").text(response.room.price);
+                        $("#tenant-monthly-rate").text(response.monthly_rate);
                         $("#tenant-balance").text(response.balance);
                         $("#tenant-total-paid").text(response.total_paid);
                         $("#tenant-registration-date").text(response.registration_date);
