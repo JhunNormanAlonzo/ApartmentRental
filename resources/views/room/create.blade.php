@@ -43,12 +43,12 @@
 
                         <div class="col-4 mt-2">
                             <div class="form-floating">
-                                <select name="status" id="status" class="form-select @error('status') is-invalid @enderror">
+                                <select name="availability" id="status" class="form-select @error('availability') is-invalid @enderror">
                                     <option value="0">Not Available</option>
                                     <option value="1">Available</option>
                                 </select>
-                                <label for="status" class="text-muted">Status</label>
-                                <x-validation-error name="status"></x-validation-error>
+                                <label for="availability" class="text-muted">Availability</label>
+                                <x-validation-error name="availability"></x-validation-error>
                             </div>
                         </div>
                     </div>

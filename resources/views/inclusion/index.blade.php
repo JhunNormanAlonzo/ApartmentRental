@@ -3,7 +3,7 @@
     <main id="main" class="main">
 
         <div class="pagetitle">
-            <h1>Ledgers</h1>
+            <h1>Inclusions</h1>
         </div>
 
         <section class="section">
@@ -11,33 +11,27 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">List of Payments</h5>
-                            <a class="btn btn-secondary" href="{{route('ledgers.create')}}"><i class="bi bi-plus"></i> New Entry</a>
+                            <h5 class="card-title">List of Inclusions</h5>
+                            <a class="btn btn-secondary" href="{{route('inclusions.create')}}"><i class="bi bi-plus"></i> Add Inclusion</a>
                             <div class="table-responsive">
                             <table class="table table-bordered" id="table">
                                 <thead>
                                 <tr>
-                                    <th>Payment Date</th>
                                     <th>Name</th>
-                                    <th>Invoice</th>
-                                    <th>Amount</th>
                                     <th>Edit</th>
                                     <th>Delete</th>
 
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($ledgers as $ledger)
+                                    @foreach($inclusions as $inclusion)
                                         <tr>
-                                            <td>{{\Carbon\Carbon::parse($ledger->payment_date)->format('M d, Y') ?? ""}}</td>
-                                            <td>{{$ledger->tenant ?? ""}}</td>
-                                            <td>{{$ledger->invoice ?? ""}}</td>
-                                            <td>{{number_format($ledger->amount, 2) ?? ""}}</td>
+                                            <td>{{$inclusion->name ?? ""}}</td>
                                             <td class="text-center">
-                                                <a href="{{route('ledgers.edit', [$ledger->id])}}"><span class="bi bi-pencil" style="pointer-events: none;" aria-hidden="true"></span></a>
+                                                <a href="{{route('inclusions.edit', [$inclusion->id])}}"><span class="bi bi-pencil" style="pointer-events: none;" aria-hidden="true"></span></a>
                                             </td>
                                             <td class="text-center">
-                                                <a  href="{{ route('ledgers.destroy', $ledger->id) }}" class="btn btn-danger" data-confirm-delete="true">
+                                                <a  href="{{ route('inclusions.destroy', $inclusion->id) }}" class="btn btn-danger" data-confirm-delete="true">
                                                     <span class="bi bi-trash" style="pointer-events: none;"></span>
                                                 </a>
                                             </td>

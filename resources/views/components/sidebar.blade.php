@@ -27,7 +27,12 @@
 
 
         <li class="nav-heading">Pages</li>
-
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{{route('inclusions.index')}}">
+                <i class="bi bi-table"></i>
+                <span>Inclusions</span>
+            </a>
+        </li>
         <li class="nav-item">
             <a class="nav-link collapsed" href="{{route('rooms.index')}}">
                 <i class="bi bi-door-open-fill"></i>

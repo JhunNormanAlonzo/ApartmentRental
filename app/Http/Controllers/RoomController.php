@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inclusion;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -42,7 +43,7 @@ class RoomController extends Controller
             'max_pax' => 'required',
             'current_pax' => 'nullable|integer|max:' . $request->max_pax,
             'price' => 'required',
-            'status' => 'required'
+            'availability' => 'required'
         ]);
 
 
@@ -60,7 +61,8 @@ class RoomController extends Controller
      */
     public function show(Room $room)
     {
-        //
+        $inclusions = Inclusion::all();
+        return view('room.show', compact('room', 'inclusions'));
     }
 
     /**
@@ -82,7 +84,7 @@ class RoomController extends Controller
             'max_pax' => 'required',
             'current_pax' => 'nullable|integer|max:' . $request->max_pax,
             'price' => 'required',
-            'status' => 'required'
+            'availability' => 'required'
         ]);
 
         if ($room->update($request->all())){
@@ -98,6 +100,16 @@ class RoomController extends Controller
     {
         if ($room->delete()){
             Alert::success("Success", "Room deleted successfully");
+            return redirect()->route('rooms.index');
+        }
+    }
+
+    public function updateInclusions(Request $request, Room $room)
+    {
+        $inclusions = $request->inclusions;
+
+        if ($room->inclusions()->sync($inclusions)){
+            Alert::success("Success", "Room Inclusion added successfully");
             return redirect()->route('rooms.index');
         }
     }

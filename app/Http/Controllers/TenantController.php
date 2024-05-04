@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\AvailabilityEnum;
 use App\Models\Ledger;
 use App\Models\Room;
 use App\Models\Tenant;
@@ -20,6 +21,8 @@ class TenantController extends Controller
     {
         confirmDelete("Delete", "Are you sure you want to delete?");
         $tenants = Tenant::all();
+        $tenant->balance = number_format($payable - $this->totalPaid($tenantId), 2);
+//        $payments =
         return view('tenant.index', compact('tenants'));
     }
 
@@ -28,7 +31,7 @@ class TenantController extends Controller
      */
     public function create()
     {
-        $rooms = Room::whereColumn('max_pax', '>', 'current_pax')->get();
+        $rooms = Room::where('availability', AvailabilityEnum::AVAILABLE)->get();
         return view('tenant.create', compact('rooms'));
     }
 
@@ -57,6 +60,10 @@ class TenantController extends Controller
         ]);
 
         if ($tenant){
+            $room = Room::find($request->room_id);
+            $room->update([
+               'availability' => AvailabilityEnum::NOT_AVAILABLE
+            ]);
 
             Alert::success('Success', "Tenant created successfully!");
             return redirect()->route('tenants.index');
@@ -77,7 +84,7 @@ class TenantController extends Controller
      */
     public function edit(Tenant $tenant)
     {
-        $rooms = Room::whereColumn('max_pax', '>', 'current_pax')->get();
+        $rooms = Room::where('availability', AvailabilityEnum::AVAILABLE)->get();
         return view('tenant.edit', compact('tenant', 'rooms'));
     }
 
@@ -109,6 +116,8 @@ class TenantController extends Controller
             'registration_date' => $request->registration_date,
         ]);
 
+//        Room::find($request->room_id)->update(['status', false]);
+
         if ($tenant){
             Alert::success('Success', "Tenant updated successfully!");
             return redirect()->route('tenants.index');
@@ -121,8 +130,10 @@ class TenantController extends Controller
      */
     public function destroy(Tenant $tenant)
     {
+        $tenant->room?->update([
+            'availability' => AvailabilityEnum::AVAILABLE
+        ]);
         $userDeleted = $tenant->user->delete();
-
         // Delete the tenant
         if ($userDeleted) {
             $tenant->delete();
@@ -138,8 +149,6 @@ class TenantController extends Controller
     {
         $tenantId = $request->tenantId;
         $tenant = Tenant::with(['user', 'room'])->where('id', $tenantId)->first();
-
-
         $monthlyRate = $tenant->room->price;
         $tenant->monthly_rate = number_format($monthlyRate, 2);
         $tenant->total_paid = number_format($this->totalPaid($tenantId), 2);

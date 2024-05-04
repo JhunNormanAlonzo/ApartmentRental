@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\AvailabilityEnum;
+use App\Models\Ledger;
+use App\Models\Room;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +27,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $countRooms = Room::count();
+        $countTenants = Tenant::count();
+        $countOccupiedRoom = Room::where('availability', AvailabilityEnum::AVAILABLE)->count();
+        $recentActivities = Ledger::with('tenant')->latest()->limit(5)->get();
+
+        return view('home', compact(['countRooms', 'countTenants', 'countOccupiedRoom', 'recentActivities']));
     }
 }

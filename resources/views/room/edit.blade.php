@@ -3,7 +3,7 @@
     <main id="main" class="main">
 
         <div class="pagetitle">
-            <h1>Rooms</h1>
+            <h1>Room</h1>
         </div>
 
         <section class="section">
@@ -50,11 +50,11 @@
 
                                     <div class="col-4 mt-2">
                                         <div class="form-floating">
-                                            <select name="status" id="status" class="form-select @error('occupied') is-invalid @enderror">
-                                                <option @if($room->status == "0") selected  @endif value="0">Not Available</option>
-                                                <option @if($room->status == "1") selected  @endif value="1">Available</option>
+                                            <select name="availability" id="availability" class="form-select @error('occupied') is-invalid @enderror">
+                                                <option @if($room->availability == "0") selected  @endif value="0">Not Available</option>
+                                                <option @if($room->availability == "1") selected  @endif value="1">Available</option>
                                             </select>
-                                            <label for="occupied" class="text-muted">Status</label>
+                                            <label for="occupied" class="text-muted">Availability</label>
                                             <x-validation-error name="occupied"></x-validation-error>
                                         </div>
                                     </div>
@@ -70,63 +70,6 @@
             </div>
         </section>
 
-
-        <form action="{{route('rooms.store')}}" method="POST">
-            @csrf
-            <div class="modal fade" data-bs-backdrop="static" id="addRoomModal">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">
-                                Add Room
-                            </h5>
-                            <button type="button" class="btn btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-12 mt-2">
-                                    <x-input id="title" name="title" type="text" placeholder="Room # (eg. Room 1)" value="{{old('title')}}">
-                                        <x-validation-error name="title"></x-validation-error>
-                                    </x-input>
-                                </div>
-                                <div class="col-12 mt-2">
-                                    <textarea class="tinymce form-select @error('description') is-invalid @enderror" name="description" placeholder="Description"></textarea>
-                                    <x-validation-error name="description"></x-validation-error>
-                                </div>
-
-                                <div class="col-4 mt-2">
-                                    <x-input id="pax" name="pax" type="number" placeholder="Pax" value="{{old('pax')}}">
-                                        <x-validation-error name="pax"></x-validation-error>
-                                    </x-input>
-                                </div>
-
-                                <div class="col-4 mt-2">
-                                    <x-input id="amount" name="amount" type="number" placeholder="Amount" value="{{old('amount')}}">
-                                        <x-validation-error name="amount"></x-validation-error>
-                                    </x-input>
-                                </div>
-
-                                <div class="col-4 mt-2">
-                                    <div class="form-floating">
-                                        <select name="occupied" id="occupied" class="form-select @error('occupied') is-invalid @enderror">
-                                            <option value="0">Not Occupied</option>
-                                            <option value="1">Occupied</option>
-                                        </select>
-                                        <label for="occupied" class="text-muted">Status</label>
-                                        <x-validation-error name="occupied"></x-validation-error>
-                                    </div>
-
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Save</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
     </main>
     @push('scripts')
 

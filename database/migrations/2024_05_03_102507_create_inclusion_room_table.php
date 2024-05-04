@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rooms', function (Blueprint $table) {
+        Schema::create('inclusion_room', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description');
-            $table->integer('max_pax');
-            $table->integer('current_pax')->default('0')->nullable();
-            $table->decimal('price', 8,2);
-            $table->boolean('availability')->default(true);
+            $table->foreignId('room_id')->constrained();
+            $table->foreignId('inclusion_id')->constrained();
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rooms');
+        Schema::dropIfExists('room_inclusion');
     }
 };

@@ -16,4 +16,8 @@ class Room extends Model
     {
         return $this->belongsToMany(Tenant::class);
     }
+
+    public function inclusions() : BelongsToMany {
+        return $this->belongsToMany(Inclusion::class);
+    }
 }

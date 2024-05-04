@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Inclusion;
 use App\Models\Room;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -14,6 +15,9 @@ class RoomSeeder extends Seeder
      */
     public function run(): void
     {
-        Room::factory(40)->create();
+        Room::factory(40)->create()->each(function ($room) {
+            $inclusionIds = Inclusion::inRandomOrder()->limit(5)->pluck('id');
+            $room->inclusions()->sync($inclusionIds);
+        });
     }
 }

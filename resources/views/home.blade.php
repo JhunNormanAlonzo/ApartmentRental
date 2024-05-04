@@ -1,12 +1,6 @@
 @extends('layouts.master')
 
 @section('content')
-    @php
-        $rooms = 40;
-        $tenants = 12;
-        $occupied = 12;
-    @endphp
-
     <main id="main" class="main">
 
         <div class="pagetitle">
@@ -31,7 +25,7 @@
                                             <i class="bi bi-door-closed"></i>
                                         </div>
                                         <div class="ps-3">
-                                            <h6>{{$rooms}}</h6>
+                                            <h6>{{$countRooms}}</h6>
                                         </div>
                                     </div>
                                 </div>
@@ -51,7 +45,7 @@
                                             <i class="bi bi-people-fill"></i>
                                         </div>
                                         <div class="ps-3">
-                                            <h6>{{$tenants}}</h6>
+                                            <h6>{{$countTenants}}</h6>
                                         </div>
                                     </div>
                                 </div>
@@ -71,8 +65,8 @@
                                             <i class="bi bi-hospital"></i>
                                         </div>
                                         <div class="ps-3">
-                                            <h6>{{$occupied}} over {{$rooms}} rooms</h6>
-                                            <span class="text-danger small pt-1 fw-bold">{{$rooms - $occupied}}</span> <span class="text-muted small pt-2 ps-1">Available</span>
+                                            <h6>{{$countOccupiedRoom}} over {{$countRooms}} rooms</h6>
+                                            <span class="text-danger small pt-1 fw-bold">{{$countRooms - $countOccupiedRoom}}</span> <span class="text-muted small pt-2 ps-1">Available</span>
 
                                         </div>
                                     </div>
@@ -107,7 +101,7 @@
                                         @for($x=1; $x<=5; $x++)
                                             <div class="activity-item d-flex">
                                                 <div class="activite-label">Room {{$x}}</div>
-                                                <i class='bi bi-circle-fill activity-badge {{$color[$x-1]}} align-self-start'></i>
+                                                <i class='bi bi-circle-fill activity-badge {{$color[rand(0,4)]}} align-self-start'></i>
                                                 <div class="activity-content">
                                                      <a href="#" class="fw-bold text-dark">Paid Bill</a>  for the month of January
                                                 </div>
@@ -124,37 +118,37 @@
                         </div>
 
                         <!-- Top Selling -->
-                        <div class="col-12">
-                            <div class="card top-selling overflow-auto">
+{{--                        <div class="col-12">--}}
+{{--                            <div class="card top-selling overflow-auto">--}}
 
 
-                                <div class="card-body pb-0">
-                                    <h5 class="card-title">Top Payer  <span>| Current Month</span></h5>
+{{--                                <div class="card-body pb-0">--}}
+{{--                                    <h5 class="card-title">Top Payer  <span>| Current Month</span></h5>--}}
 
-                                    <table class="table table-borderless">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">Unit</th>
-                                            <th scope="col">Amount</th>
-                                            <th scope="col">Date</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @for($x=1; $x<=5; $x++)
+{{--                                    <table class="table table-borderless">--}}
+{{--                                        <thead>--}}
+{{--                                        <tr>--}}
+{{--                                            <th scope="col">Unit</th>--}}
+{{--                                            <th scope="col">Amount</th>--}}
+{{--                                            <th scope="col">Date</th>--}}
+{{--                                        </tr>--}}
+{{--                                        </thead>--}}
+{{--                                        <tbody>--}}
+{{--                                        @for($x=1; $x<=5; $x++)--}}
 
-                                        <tr>
-                                            <td><a href="#" class="text-primary fw-bold">Room {{random_int(1, 40)}}</a></td>
-                                            <td class="fw-bold">{{number_format(random_int(2500, 5000))}}</td>
-                                            <td>{{now()}}</td>
-                                        </tr>
-                                        @endfor
-                                        </tbody>
-                                    </table>
+{{--                                        <tr>--}}
+{{--                                            <td><a href="#" class="text-primary fw-bold">Room {{random_int(1, 40)}}</a></td>--}}
+{{--                                            <td class="fw-bold">{{number_format(random_int(2500, 5000))}}</td>--}}
+{{--                                            <td>{{now()}}</td>--}}
+{{--                                        </tr>--}}
+{{--                                        @endfor--}}
+{{--                                        </tbody>--}}
+{{--                                    </table>--}}
 
-                                </div>
+{{--                                </div>--}}
 
-                            </div>
-                        </div><!-- End Top Selling -->
+{{--                            </div>--}}
+{{--                        </div><!-- End Top Selling -->--}}
 
                     </div>
                 </div><!-- End Left side columns -->

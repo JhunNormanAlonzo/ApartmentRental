@@ -14,15 +14,16 @@
                             <h5 class="card-title">List of Rooms</h5>
                             <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addRoomModal"><i class="bi bi-plus"></i> Add Room</button>
                             <div class="table-responsive">
-                            <table class="table" id="table">
+                            <table class="table table-bordered" id="table">
                                 <thead>
                                 <tr>
                                     <th>Room</th>
                                     <th>Description</th>
+                                    <th>Availability</th>
                                     <th>Pax</th>
 {{--                                    <th>Current Pax</th>--}}
                                     <th>Price</th>
-                                    <th>Status</th>
+                                    <th>Inclusions</th>
                                     <th>Edit</th>
                                     <th>Delete</th>
                                 </tr>
@@ -32,10 +33,17 @@
                                         <tr>
                                             <td>{{$room->title}}</td>
                                             <td>{!! $room->description !!}</td>
+                                            <td>{{$room->availability ? "Available" : "Not Available"}}</td>
                                             <td>{{$room->max_pax}}</td>
 {{--                                            <td>{{$room->current_pax}}</td>--}}
                                             <td>{{$room->price}}</td>
-                                            <td>{{$room->status ? "Occupied" : "Available"}}</td>
+                                            <td>
+                                                <a href="{{route('rooms.show', [$room->id])}}"><i class="bi bi-plus-circle"></i></a>
+                                                <br>
+                                                @foreach($room->inclusions as $inclusion)
+                                                    <p class="badge bg-info text-dark">{{ $inclusion->name }}</p>
+                                                @endforeach
+                                            </td>
 
                                             <td>
                                                 <a href="{{route('rooms.edit', [$room->id])}}"><span class="bi bi-pencil" style="pointer-events: none;" aria-hidden="true"></span></a>

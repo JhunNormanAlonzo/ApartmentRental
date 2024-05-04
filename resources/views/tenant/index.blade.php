@@ -14,7 +14,7 @@
                             <h5 class="card-title">List of Tenants</h5>
                             <a class="btn btn-secondary" href="{{route('tenants.create')}}"><i class="bi bi-plus"></i> Add Tenant</a>
                             <div class="table-responsive">
-                            <table class="table" id="table">
+                            <table class="table table-bordered" id="table">
                                 <thead>
                                 <tr>
                                     <th>Name</th>
@@ -38,7 +38,7 @@
                                             <td>{{$tenant->user->name ?? ""}}</td>
                                             <td>{{$tenant->user->email ?? ""}}</td>
                                             <td>{{$tenant->room->title ?? ""}}</td>
-                                            <td>{{number_format($tenant->room->price) ?? ""}}</td>
+                                            <td>{{number_format($tenant?->room?->price) ?? ""}}</td>
                                             <td>{{$tenant->ledger->balance ?? "N/A"}}</td>
                                             <td>{{$tenant->ledger->lastPayment ?? "N/A"}}</td>
                                             <td>{{$tenant->contact_number ?? ""}}</td>
@@ -115,6 +115,8 @@
     @push('scripts')
 
         <script>
+            let payment_list;
+
 
             function viewTenant(tenantId){
                 let tenantInfoModal = new bootstrap.Modal($("#tenantInfoModal"));
@@ -135,7 +137,31 @@
                         $("#tenant-registration-date").text(response.registration_date);
                         $("#tenant-payable-month").text(response.payable_month);
                     }
-                })
+                });
+
+                {{--payment_list = $('#payment_list').DataTable({--}}
+                {{--    lengthChange: false,--}}
+                {{--    pageLength: 100,--}}
+                {{--    scrollX: true,--}}
+                {{--    scrollCollapse: true,--}}
+                {{--    autoWidth: false,--}}
+                {{--    searching: true,--}}
+                {{--    responsive: true,--}}
+                {{--    processing: true,--}}
+                {{--    serverSide: true,--}}
+                {{--    ajax: {--}}
+                {{--        method: "GET",--}}
+                {{--        url: "{{ route('ledgers.getTenantPaymentList', ['tenant' => ':tenantId']) }}".replace(':tenantId', tenantId),--}}
+                {{--    },--}}
+                {{--    columns: [--}}
+                {{--        {--}}
+                {{--            data: "first"--}}
+                {{--        },--}}
+                {{--    ]--}}
+                {{--});--}}
+
+
+
 
                 tenantInfoModal.show();
             }

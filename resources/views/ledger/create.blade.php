@@ -1,62 +1,118 @@
-<form action="{{route('rooms.store')}}" method="POST">
-    @csrf
-    <div class="modal fade" data-bs-backdrop="static" id="addRoomModal">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        Add Room
-                    </h5>
-                    <button type="button" class="btn btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-6 mt-2">
-                            <x-input id="title" name="title" type="text" placeholder="Room # (eg. Room 1)" value="{{old('title')}}">
-                                <x-validation-error name="title"></x-validation-error>
-                            </x-input>
-                        </div>
+@extends('layouts.master')
+@section('content')
+    <main id="main" class="main">
 
-                        <div class="col-6 mt-2">
-                            <x-input id="price" name="price" type="number" placeholder="Price" value="{{old('price')}}">
-                                <x-validation-error name="price"></x-validation-error>
-                            </x-input>
-                        </div>
-                        <div class="col-12 mt-2">
-                            <textarea class="tinymce form-select @error('description') is-invalid @enderror" name="description" placeholder="Description"></textarea>
-                            <x-validation-error name="description"></x-validation-error>
-                        </div>
+        <div class="pagetitle">
+            <h1>Invoice</h1>
+        </div>
 
-                        <div class="col-4 mt-2">
-                            <x-input id="max_pax" name="max_pax" type="number" placeholder="Max Pax" value="{{old('max_pax')}}">
-                                <x-validation-error name="max_pax"></x-validation-error>
-                            </x-input>
-                        </div>
+        <section class="section">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">New Invoice</h5>
+                            <a class="btn btn-secondary" href="{{route('ledgers.index')}}"><i class="bi bi-back"></i> Back to payment lists</a>
 
-                        <div class="col-4 mt-2 d-none">
-                            <x-input id="current_pax" name="current_pax" type="number" placeholder="Current Pax" value="{{old('current_pax')}}">
-                                <x-validation-error name="current_pax"></x-validation-error>
-                            </x-input>
-                        </div>
+                            <form action="{{route('ledgers.store')}}" method="POST">
+                                @csrf
+
+                                <div class="row">
+                                    <div class="col-12 mt-2">
+                                        <div class="form-floating">
+                                            <select class="form-select" onchange="viewTenantInfo()" name="tenant_id" id="tenant_id" aria-label="Floating label select example">
+                                                <option selected disabled>None</option>
+                                                @foreach($tenants as $tenant)
+                                                    <option value="{{$tenant->id}}">{{$tenant->user->name}}</option>
+                                                @endforeach
+                                            </select>
+                                            <label for="tenant_id">Select Tenants</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12" id="tenant_info">
+                                        <br>
+                                        <span class="fw-bold text-secondary">Details</span>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-12 mt-2">
+                                                Tenant : <span class="fw-bold" id="tenant-name"></span>
+                                            </div>
+                                            <div class="col-12 mt-2">
+                                                Monthly Rate : <span class="fw-bold" id="tenant-monthly-rate"></span>
+                                            </div>
+                                            <div class="col-12 mt-2">
+                                                Balance : <span class="fw-bold" id="tenant-balance"></span>
+                                            </div>
+                                            <div class="col-12 mt-2">
+                                                Total Paid : <span class="fw-bold" id="tenant-total-paid"></span>
+                                            </div>
+                                            <div class="col-12 mt-2">
+                                                Rent Started : <span class="fw-bold" id="tenant-registration-date"></span>
+                                            </div>
+                                            <div class="col-12 mt-2">
+                                                Payable Month : <span class="fw-bold" id="tenant-payable-month"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6 mt-2">
+                                        <x-input id="invoice" name="invoice" type="text" placeholder="Invoice" value="{{old('invoice')}}">
+                                            <x-validation-error name="invoice"></x-validation-error>
+                                        </x-input>
+                                    </div>
+
+                                    <div class="col-6 mt-2">
+                                        <x-input id="amount" name="amount" type="text" placeholder="Amount" value="{{old('amount')}}">
+                                            <x-validation-error name="amount"></x-validation-error>
+                                        </x-input>
+                                    </div>
+
+
+                                    <div class="col-12 mt-2">
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                    </div>
+                                </div>
 
 
 
-                        <div class="col-4 mt-2">
-                            <div class="form-floating">
-                                <select name="status" id="status" class="form-select @error('status') is-invalid @enderror">
-                                    <option value="0">Not Available</option>
-                                    <option value="1">Available</option>
-                                </select>
-                                <label for="status" class="text-muted">Status</label>
-                                <x-validation-error name="status"></x-validation-error>
-                            </div>
+                            </form>
+
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
             </div>
-        </div>
-    </div>
-</form>
+        </section>
+
+
+
+    </main>
+
+    @push('scripts')
+        <script>
+            $("#tenant_info").hide();
+            function viewTenantInfo() {
+
+                let tenantId = $("#tenant_id").val();
+
+                $.ajax({
+                    url: "{{route('tenants.get-tenant-info')}}",
+                    method: "GET",
+                    data: {
+                        tenantId: tenantId
+                    },
+                    success: function (response) {
+                        $("#tenant-name").text(response.user.name);
+                        $("#tenant-monthly-rate").text(response.monthly_rate);
+                        $("#tenant-balance").text(response.balance);
+                        $("#tenant-total-paid").text(response.total_paid);
+                        $("#tenant-registration-date").text(response.registration_date);
+                        $("#tenant-payable-month").text(response.payable_month);
+                        $("#tenant_info").show();
+                    }
+                });
+            }
+        </script>
+    @endpush
+
+
+@endsection

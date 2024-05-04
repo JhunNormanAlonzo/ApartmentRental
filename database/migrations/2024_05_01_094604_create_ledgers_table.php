@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('tenant');
             $table->decimal('monthly_rate', 8,2);
             $table->decimal('amount', 8,2);
-            $table->decimal('balance', 8,2);
             $table->text('invoice')->nullable();
             $table->timestamps();
         });
