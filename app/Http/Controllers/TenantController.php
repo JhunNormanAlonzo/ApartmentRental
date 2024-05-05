@@ -21,7 +21,7 @@ class TenantController extends Controller
     {
         confirmDelete("Delete", "Are you sure you want to delete?");
         $tenants = Tenant::all();
-        $tenant->balance = number_format($payable - $this->totalPaid($tenantId), 2);
+//        $tenant->balance = number_format($payable - $this->totalPaid($tenantId), 2);
 //        $payments =
         return view('tenant.index', compact('tenants'));
     }
@@ -149,46 +149,17 @@ class TenantController extends Controller
     {
         $tenantId = $request->tenantId;
         $tenant = Tenant::with(['user', 'room'])->where('id', $tenantId)->first();
-        $monthlyRate = $tenant->room->price;
-        $tenant->monthly_rate = number_format($monthlyRate, 2);
-        $tenant->total_paid = number_format($this->totalPaid($tenantId), 2);
-        $tenant->payable_month = $this->totalPayableMonth($tenantId);
-        $payable = $tenant->payable_month * $monthlyRate;
-        $tenant->balance = number_format($payable - $this->totalPaid($tenantId), 2);
-        return response()->json($tenant);
+        return response()->json([
+            'tenant' => $tenant,
+            'total_payable_month' => $tenant->totalPayableMonth(),
+            'total_paid' => number_format($tenant->totalPaid(), 2),
+            'monthly_rate' => number_format($tenant->monthlyRate(), 2),
+            'balance' => number_format($tenant->balance(), 2),
+        ]);
     }
-
-    public function totalPaid($tenantId) : int
-    {
-        $tenant = Tenant::find($tenantId);
-        $registrationDate = $tenant->registration_date;
-        $currentDate = now()->format('Y-m-d');
-        return Ledger::where('tenant_id', $tenant->id)
-            ->whereBetween('registration_date', [$registrationDate, $currentDate])
-            ->sum('amount');
-    }
-
-    public function totalPayableMonth($tenantId) : int
-    {
-        $tenant = Tenant::find($tenantId);
-        $registrationDate = Carbon::parse($tenant->registration_date);
-        $now = Carbon::now();
-        return $now->diffInMonths($registrationDate);
-//        if ($registrationDate->month === $now->month && $registrationDate->year === $now->year) {
-//            $totalMonths++; // Add 1 to account for the current month
-//        }
-    }
-
-    public function totalMonthlyRate($tenantId) : int
-    {
-        $tenant = Tenant::find($tenantId);
-        $registrationDate = $tenant->registration_date;
-        $currentDate = now()->format('Y-m-d');
-        return Ledger::where('tenant_id', $tenant->id)
-            ->whereBetween('registration_date', [$registrationDate, $currentDate])
-            ->sum('monthly_rate');
-    }
-
 
 
 }
+
+
+

@@ -6,6 +6,7 @@ use App\Models\Ledger;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
+use Yajra\DataTables\Facades\DataTables;
 
 class LedgerController extends Controller
 {
@@ -14,6 +15,7 @@ class LedgerController extends Controller
      */
     public function index()
     {
+        confirmDelete("Delete", "Are you sure you want to delete?");
         $ledgers = Ledger::orderBy('created_at', 'desc')->get();
         return view('ledger.index', compact('ledgers'));
     }
@@ -63,7 +65,7 @@ class LedgerController extends Controller
      */
     public function edit(Ledger $ledger)
     {
-        //
+        dd($ledger);
     }
 
     /**
@@ -79,14 +81,17 @@ class LedgerController extends Controller
      */
     public function destroy(Ledger $ledger)
     {
-        //
+        if ($ledger->delete()){
+            Alert::success("Success", "Payment void successfully!");
+            return redirect()->route('ledgers.index');
+        }
     }
 
 
     public function getTenantPaymentList(Tenant $tenant)
     {
-        return response()->json($tenant->ledgers());
-
+        $ledgers = $tenant->ledgers()?->get();
+        return DataTables::of($ledgers)->make(true);
     }
 
 

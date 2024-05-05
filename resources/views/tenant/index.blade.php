@@ -38,9 +38,9 @@
                                             <td>{{$tenant->user->name ?? ""}}</td>
                                             <td>{{$tenant->user->email ?? ""}}</td>
                                             <td>{{$tenant->room->title ?? ""}}</td>
-                                            <td>{{number_format($tenant?->room?->price) ?? ""}}</td>
-                                            <td>{{$tenant->ledger->balance ?? "N/A"}}</td>
-                                            <td>{{$tenant->ledger->lastPayment ?? "N/A"}}</td>
+                                            <td>{{number_format($tenant->monthlyRate(), 2)?? ""}}
+                                            <td>{{number_format($tenant->balance(), 2) ?? "N/A"}}</td>
+                                            <td>{{number_format($tenant->lastPayment(), 2) ?? "N/A"}}</td>
                                             <td>{{$tenant->contact_number ?? ""}}</td>
                                             <td>{!! $tenant->address ?? "" !!}</td>
                                             <td>{{$tenant->registration_date ?? ""}}</td>
@@ -105,6 +105,7 @@
                             <div class="col-8">
                                 <span class="fw-bold text-secondary">Payment List</span>
                                 <hr>
+                                <table class="table table-bordered table-hover table-striped table-info" id="payment_list"></table>
                             </div>
                         </div>
                     </div>
@@ -119,7 +120,9 @@
 
 
             function viewTenant(tenantId){
-                let tenantInfoModal = new bootstrap.Modal($("#tenantInfoModal"));
+                let tenantInfoModal = new bootstrap.Modal($("#tenantInfoModal"), {
+                    backdrop: 'static'
+                });
 
 
                 $.ajax({
@@ -129,36 +132,33 @@
                         tenantId : tenantId
                     },
                     success : function (response){
-                        // console.log(response);
-                        $("#tenant-name").text(response.user.name);
+                        $("#tenant-name").text(response.tenant.user.name);
                         $("#tenant-monthly-rate").text(response.monthly_rate);
                         $("#tenant-balance").text(response.balance);
                         $("#tenant-total-paid").text(response.total_paid);
-                        $("#tenant-registration-date").text(response.registration_date);
-                        $("#tenant-payable-month").text(response.payable_month);
+                        $("#tenant-registration-date").text(response.tenant.registration_date);
+                        $("#tenant-payable-month").text(response.total_payable_month);
                     }
                 });
 
-                {{--payment_list = $('#payment_list').DataTable({--}}
-                {{--    lengthChange: false,--}}
-                {{--    pageLength: 100,--}}
-                {{--    scrollX: true,--}}
-                {{--    scrollCollapse: true,--}}
-                {{--    autoWidth: false,--}}
-                {{--    searching: true,--}}
-                {{--    responsive: true,--}}
-                {{--    processing: true,--}}
-                {{--    serverSide: true,--}}
-                {{--    ajax: {--}}
-                {{--        method: "GET",--}}
-                {{--        url: "{{ route('ledgers.getTenantPaymentList', ['tenant' => ':tenantId']) }}".replace(':tenantId', tenantId),--}}
-                {{--    },--}}
-                {{--    columns: [--}}
-                {{--        {--}}
-                {{--            data: "first"--}}
-                {{--        },--}}
-                {{--    ]--}}
-                {{--});--}}
+
+
+                payment_list = $('#payment_list').DataTable({
+                    lengthChange: true,
+                    searching: true,
+                    processing: true,
+                    serverSide: true,
+                    ajax : {
+                        type: "GET",
+                        url: "{{ route('ledgers.getTenantPaymentList', ['tenant' => ':tenantId']) }}".replace(':tenantId', tenantId),
+                    },
+                    columns : [
+                        { data: 'payment_date', title: 'Payment Date' },
+                        { data: 'amount', title: 'Amount' },
+                        { data: 'invoice', title: 'Invoice' },
+                    ],
+                });
+
 
 
 
